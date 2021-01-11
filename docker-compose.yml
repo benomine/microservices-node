@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo
+    volumes:
+      - ./mongo:/data/db
+    ports:
+      - "2000:27017"
+    restart: always
+    networks:
+      - restJS
+  read:
+    build:
+      context: ./ReadConversion
+      dockerfile: Dockerfile
+    env_file: ./ReadConversion/.env
+    environment:
+      - DATABASE_URL=mongodb://mongo:2000/temperature
+    links:
+      - mongo
+    ports:
+      - "5001:5001"
+      - "5000:5000"
+    depends_on:
+      - mongo
+    networks:
+      - restJS
+    restart: always
+networks:
+  restJS:
+    driver: bridge
