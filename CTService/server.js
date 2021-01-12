@@ -15,5 +15,5 @@ var options = {
     cert: fs.readFileSync('./certificates/cert.pem')
 };
 
-http.createServer(app).listen(6000);
-https.createServer(options, app).listen(6001);
+http.createServer(app).listen(6000, '0.0.0.0');
+https.createServer(options, app).listen(6001, '0.0.0.0');

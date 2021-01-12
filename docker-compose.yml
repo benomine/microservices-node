@@ -15,7 +15,7 @@ services:
       dockerfile: Dockerfile
     env_file: ./ReadConversion/.env
     environment:
-      - DATABASE_URL=mongodb://mongo:2000/temperature
+      - DATABASE_URL=mongodb://mongo/temperature
     links:
       - mongo
     ports:
@@ -26,6 +26,73 @@ services:
     networks:
       - restJS
     restart: always
+  delete:
+    build:
+      context: ./DeleteConversion
+      dockerfile: Dockerfile
+    env_file: ./DeleteConversion/.env
+    environment:
+      - DATABASE_URL=mongodb://mongo/temperature
+    links:
+      - mongo
+    ports:
+      - "8001:8001"
+      - "8000:8000"
+    depends_on:
+      - mongo
+    networks:
+      - restJS
+    restart: always
+  create:
+    build:
+      context: ./CreateConversion
+      dockerfile: Dockerfile
+    env_file: ./CreateConversion/.env
+    environment:
+      - DATABASE_URL=mongodb://mongo/temperature
+    links:
+      - mongo
+    ports:
+      - "4001:4001"
+      - "4000:4000"
+    depends_on:
+      - mongo
+    networks:
+      - restJS
+    restart: always
+  update:
+    build:
+      context: ./UpdateConversion
+      dockerfile: Dockerfile
+    env_file: ./UpdateConversion/.env
+    environment:
+      - DATABASE_URL=mongodb://mongo/temperature
+    links:
+      - mongo
+    ports:
+      - "7001:7001"
+      - "7000:7000"
+    depends_on:
+      - mongo
+    networks:
+      - restJS
+    restart: always
+  conversion:
+    build:
+      context: ./CTService
+      dockerfile: Dockerfile
+    env_file: ./CTService/.env
+    environment:
+      - URI=https://create:4001/api/conversion
+    links:
+      - mongo
+    ports:
+      - "6001:6001"
+      - "6000:6000"
+    depends_on:
+      - mongo
+    networks:
+      - restJS
+    restart: always    
 networks:
   restJS:
-    driver: bridge

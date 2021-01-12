@@ -36,9 +36,15 @@ namespace ClientService
 
                 var uri = new Uri("https://localhost:6001/api/conversiontemperature");
                 var json = JsonConvert.SerializeObject(conversionRequest);
-                var data = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response =  await client.PostAsync(uri, data);
+                var request = new HttpRequestMessage
+                {
+                    Content = new StringContent(json, Encoding.UTF8, "application/json"),
+                    RequestUri = uri,
+                    Method = HttpMethod.Post
+                };
+
+                var response =  await client.SendAsync(request);
                 var result = response.Content.ReadAsStringAsync();
 
                 textBox2.Text = result.Result;

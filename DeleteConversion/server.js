@@ -7,11 +7,21 @@ var fs = require('fs');
 const app = express()
 const mongoose = require('mongoose')
 
-mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true })
-const db = mongoose.connection
+//mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true , useUnifiedTopology: true})
+//const db = mongoose.connection
 
-db.on('error', (error) => console.error(error))
-db.once('open', () => console.log('connected to database'))
+/* db.on('error', (error) => console.error(error))
+db.once('open', () => console.log('connected to database')) */
+
+var connectWithRetry = function() {
+    return mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true , useUnifiedTopology: true}, function(err) {
+      if (err) {
+        console.error('Failed to connect to mongo on startup - retrying in 5 sec', err);
+        setTimeout(connectWithRetry, 5000);
+      }
+    });
+  };
+connectWithRetry();
 
 app.use(express.json())
 
@@ -23,5 +33,5 @@ var options = {
     cert: fs.readFileSync('./certificates/cert.pem')
 };
 
-http.createServer(app).listen(8000);
-https.createServer(options, app).listen(8001);
+http.createServer(app).listen(8000, '0.0.0.0');
+https.createServer(options, app).listen(8001, '0.0.0.0');

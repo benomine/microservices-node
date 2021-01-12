@@ -1,4 +1,4 @@
-function ConvertFToC(temp) {
+function  ConvertFToC(temp) {
     return (temp - 32) / 1.8;
 }
 
